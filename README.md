@@ -16,7 +16,7 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Client UI showcase (Canvas only, mock only)
+## Client UI showcase (Modern + theme pills, mock only)
 
 For a **standalone demo** (no API, no login or register screens, mock dashboard data):
 
@@ -27,7 +27,7 @@ cp .env.showcase.example .env.local
 npm run dev
 ```
 
-2. Open [http://localhost:3000](http://localhost:3000) — you go straight to the **Canvas** dashboard (`/dashboard-canvas`). Any other path (including `/login`) redirects there.
+2. Open [http://localhost:3000](http://localhost:3000) — you land on **`/dashboard-modern`**. The top **Dashboard / Theme 2 / Theme 3** pills switch **Modern**, **Analytics**, and **Guidance** only. Any other URL (including `/login`) redirects back to **`/dashboard-modern`**.
 
 To ship this mode on Vercel (or similar), set `NEXT_PUBLIC_SHOWCASE_MODE=true` in the project environment variables.
 

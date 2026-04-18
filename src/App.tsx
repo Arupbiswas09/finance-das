@@ -62,16 +62,32 @@ const App = () => {
               {!isShowcaseMode() && <FloatingChatWidget />}
               {isShowcaseMode() ? (
               <Routes>
-                <Route path="/" element={<Navigate to="/dashboard-canvas" replace />} />
+                <Route path="/" element={<Navigate to="/dashboard-modern" replace />} />
                 <Route
-                  path="/dashboard-canvas"
+                  path="/dashboard-modern"
                   element={
                     <ProtectedRoute>
-                      <DashboardCanvas />
+                      <DashboardModern />
                     </ProtectedRoute>
                   }
                 />
-                <Route path="*" element={<Navigate to="/dashboard-canvas" replace />} />
+                <Route
+                  path="/analytics-modern"
+                  element={
+                    <ProtectedRoute>
+                      <AnalyticsModern />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/dashboard-guidance"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardGuidance />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="*" element={<Navigate to="/dashboard-modern" replace />} />
               </Routes>
               ) : (
               <Routes>
