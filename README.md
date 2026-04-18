@@ -29,7 +29,7 @@ npm run dev
 
 2. Open [http://localhost:3000](http://localhost:3000) — you land on **`/dashboard-modern`**. The top **Dashboard / Theme 2 / Theme 3** pills switch **Modern**, **Analytics**, and **Guidance** only. Any other URL (including `/login`) redirects back to **`/dashboard-modern`**.
 
-To ship this mode on Vercel (or similar), set `NEXT_PUBLIC_SHOWCASE_MODE=true` in the project environment variables.
+**Vercel:** builds set `VERCEL=1`, so **showcase is on by default** (you land on `/dashboard-modern` with working theme pills). To ship the **full** app instead, set project env `NEXT_PUBLIC_SHOWCASE_MODE=false` and redeploy.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
