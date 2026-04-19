@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { UserProfile } from "@/components/UserProfile";
 import { NotificationModal } from "@/components/NotificationModal";
 import {
@@ -7,24 +7,26 @@ import {
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { DashboardShellThemePills } from "@/components/DashboardShellThemePills";
-import { useDashboardData, formatDate, getActivityStatusDisplay } from "@/hooks/useDashboardData";
+import {
+  useDashboardData,
+  formatDate,
+  getActivityStatusDisplay,
+  type Activity as DashboardActivityRow,
+} from "@/hooks/useDashboardData";
+import {
+  SHOWCASE_RECENT_ACTIVITY,
+  withKpiMockFallback,
+} from "@/lib/showcaseMockData";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, ResponsiveContainer, Cell, CartesianGrid, Tooltip
 } from "recharts";
-
-// --- Original Helpers ---
-function healthToneLabel(score: number): { label: string; chip: string } {
-  if (score >= 80) return { label: "In good shape", chip: "Stable" };
-  if (score >= 50) return { label: "Room to improve", chip: "Review" };
-  return { label: "System is awaiting sync", chip: "Action Required" };
-}
 
 // --- Dynamic Tooltips mapping to real operational structures ---
 const ActivityTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-[#D4F718] border border-[#BAE61A] text-slate-800 px-2.5 py-1 flex items-center justify-center rounded-[8px] shadow-md font-bold text-[11px] transform -translate-y-2">
-        {payload[0].value.toLocaleString()} events
+        {payload[0].value.toLocaleString()} activities
       </div>
     );
   }
@@ -95,19 +97,39 @@ const mockActivityFallback = [
   { id: 'm3', title: 'Yuki Transaction Audit', description: 'Audit passed', type: 'yuki', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(), status: 'completed' },
 ];
 
+/** Sum shown above the activity bar chart — mock curve totals for a consistent showcase layout. */
+const mockActivityBarsTotal = mockActivityBars.reduce((acc, d) => acc + d.value, 0);
+
 export default function DashboardModern() {
-  const { dashboardStats, recentActivity, isLoading } = useDashboardData();
+  const { dashboardStats, recentActivity, isLoading, firstName } = useDashboardData();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const onMainDashboard = pathname === "/dashboard-modern" || pathname === "/dashboard";
   const [notifOpen, setNotifOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
-  const healthScore = dashboardStats?.system_health.score ?? 0;
-  const toneMeta = healthToneLabel(healthScore);
-  const stats = dashboardStats;
+  const stats = useMemo(() => {
+    if (!dashboardStats) return null;
+    return withKpiMockFallback(dashboardStats);
+  }, [dashboardStats]);
 
-  const displayActivity = recentActivity && recentActivity.length > 0 ? recentActivity : mockActivityFallback;
+  const healthScore = stats?.system_health.score ?? 0;
+
+  const isRawWorkspaceEmpty = Boolean(
+    dashboardStats &&
+      dashboardStats.clients.total === 0 &&
+      dashboardStats.reports.total === 0 &&
+      dashboardStats.newsletters.total === 0,
+  );
+
+  const displayActivity =
+    recentActivity && recentActivity.length > 0
+      ? recentActivity
+      : isRawWorkspaceEmpty
+        ? (SHOWCASE_RECENT_ACTIVITY.map((a) => ({
+            ...a,
+          })) as DashboardActivityRow[])
+        : mockActivityFallback;
   const healthColor = healthScore >= 80 ? "#D4F718" : healthScore >= 50 ? "#3b82f6" : "#f59e0b";
 
   // Recharts Dynamic Palette Support
@@ -120,6 +142,24 @@ export default function DashboardModern() {
     neon: '#D4F718',
     dotFill: isDark ? '#121214' : '#ffffff'
   };
+
+  /** Welcome strip: real last-7-days count, or showcase sample when the workspace API is empty. */
+  const activityWeekCountDisplay = useMemo(() => {
+    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const real = (recentActivity ?? []).filter(
+      (a) => new Date(a.timestamp).getTime() >= cutoff,
+    ).length;
+    if (real > 0) return real;
+    if (!isRawWorkspaceEmpty) return 0;
+    return SHOWCASE_RECENT_ACTIVITY.filter(
+      (a) => new Date(a.timestamp).getTime() >= cutoff,
+    ).length;
+  }, [recentActivity, isRawWorkspaceEmpty]);
+
+  const draftNewsletters = useMemo(() => {
+    if (!stats) return 0;
+    return Math.max(0, stats.newsletters.total - stats.newsletters.published);
+  }, [stats]);
 
   if (isLoading || !stats) {
     return (
@@ -244,7 +284,7 @@ export default function DashboardModern() {
                          <ChevronLeft className="w-5 h-5" />
                       </button>
                       <h1 className={`text-[32px] sm:text-[38px] font-light tracking-tight leading-none mb-1 flex items-center gap-4 ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                         AI Command Center
+                         Hello, {firstName}
                          <span className={`px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest rounded-md flex items-center gap-1.5 relative top-[-4px] border border-transparent shadow-sm ${isDark ? 'bg-[#D4F718]/10 border-[#D4F718]/20 text-[#D4F718]' : 'bg-[#f0fccb] border-[#d9f99d] text-slate-700'}`}>
                            <div className="w-1.5 h-1.5 rounded-full bg-[#D4F718] animate-pulse"></div>
                            Cortex Active
@@ -277,8 +317,14 @@ export default function DashboardModern() {
                        <Activity className="w-5 h-5 animate-pulse" />
                     </div>
                     <div>
-                       <h2 className={`text-[14px] font-bold leading-tight ${isDark ? 'text-white' : 'text-slate-800'}`}>Your system is live & learning.</h2>
-                       <p className={`text-[12px] mt-0.5 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Cortex AI has successfully automated <span className={`font-bold ${isDark ? 'text-[#D4F718]' : 'text-indigo-600'}`}>182 tasks</span> this week.</p>
+                       <h2 className={`text-[14px] font-bold leading-tight ${isDark ? 'text-white' : 'text-slate-800'}`}>Welcome back! Track the progress here.</h2>
+                       <p className={`text-[12px] mt-0.5 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                         Last 7 days:{' '}
+                         <span className={`font-bold ${isDark ? 'text-[#D4F718]' : 'text-indigo-600'}`}>{activityWeekCountDisplay}</span>
+                         {' '}activity records ·{' '}
+                         <span className={`font-bold ${isDark ? 'text-[#D4F718]' : 'text-indigo-600'}`}>{stats.reports.recent}</span>
+                         {' '}recent reports
+                       </p>
                     </div>
                  </div>
                  <button className={`mt-4 sm:mt-0 px-5 py-2 rounded-full text-[12px] font-bold transition-all border ${isDark ? 'bg-white/5 text-white hover:bg-white/10 border-white/10' : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border-slate-200'}`}>
@@ -353,16 +399,16 @@ export default function DashboardModern() {
                              <div className={`flex items-center justify-between py-2 border-b ${isDark ? 'border-white/5' : 'border-slate-100'}`}>
                                 <div className="flex items-center gap-2">
                                   <div className="w-[4px] h-[12px] rounded-full bg-emerald-400"></div>
-                                  <span className={`text-[12px] font-semibold ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Model Latency</span>
+                                  <span className={`text-[12px] font-semibold ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>System health</span>
                                 </div>
-                                <span className={`text-[12px] font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>24ms</span>
+                                <span className={`text-[12px] font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>{healthScore}</span>
                              </div>
                              <div className={`flex items-center justify-between py-2 border-b ${isDark ? 'border-white/5' : 'border-slate-100'}`}>
                                 <div className="flex items-center gap-2">
                                   <div className="w-[4px] h-[12px] rounded-full bg-amber-400"></div>
-                                  <span className={`text-[12px] font-semibold ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Human Approvals</span>
+                                  <span className={`text-[12px] font-semibold ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Draft newsletters</span>
                                 </div>
-                                <span className={`text-[12px] font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>{stats.newsletters.total - stats.newsletters.published || 0}</span>
+                                <span className={`text-[12px] font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>{draftNewsletters}</span>
                              </div>
                          </div>
 
@@ -420,7 +466,7 @@ export default function DashboardModern() {
                       </div>
                       
                       <div className={`text-[44px] font-light tracking-tight leading-none mb-1 ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                        {mockActivityBars.reduce((acc, curr) => acc + curr.value, 0)}
+                        {mockActivityBarsTotal}
                       </div>
                       
                       <div className="flex-1 -mx-2 mt-auto relative z-10">
@@ -443,8 +489,8 @@ export default function DashboardModern() {
                    <div className={`rounded-[24px] p-7 pb-0 flex flex-col h-[300px] relative border shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-colors ${isDark ? 'bg-[#0f0f11] border-white/5' : 'bg-[#FCFCFC] border-slate-100'}`}>
                       <div className="flex items-start justify-between mb-2 relative z-10">
                          <div>
-                            <h3 className={`text-[15px] font-semibold mb-0.5 ${isDark ? 'text-white' : 'text-slate-800'}`}>AI Report Generation</h3>
-                            <p className={`text-[12px] font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Intelligence engine output</p>
+                            <h3 className={`text-[15px] font-semibold mb-0.5 ${isDark ? 'text-white' : 'text-slate-800'}`}>Total reports</h3>
+                            <p className={`text-[12px] font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Workspace report totals</p>
                          </div>
                          <button className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${isDark ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-slate-100 text-slate-400 hover:bg-slate-50'}`}>
                              <ArrowUpRight className="w-3.5 h-3.5" />
@@ -453,9 +499,13 @@ export default function DashboardModern() {
                       
                       <div className="relative z-10 mb-3">
                         <div className={`text-[34px] font-light tracking-tight leading-none mb-1 flex items-start gap-1 ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                          {stats.reports.total || 145}
+                          {stats.reports.total}
                         </div>
-                        <div className={`text-[11px] font-semibold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{stats.reports.completed || 118} reports auto-published</div>
+                        <div className={`text-[11px] font-semibold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                          {stats.reports.completed > 0
+                            ? `${stats.reports.completed}% completed`
+                            : `${stats.reports.recent} in recent activity`}
+                        </div>
                       </div>
 
                       <div className="flex-1 -mx-0 mt-auto relative z-0">
@@ -500,8 +550,10 @@ export default function DashboardModern() {
                    <div className={`rounded-[24px] p-7 pb-0 flex flex-col h-[320px] border shadow-[0_2px_10px_rgba(0,0,0,0.015)] relative transition-colors ${isDark ? 'bg-[#121214] border-white/5' : 'bg-white border-slate-100'}`}>
                       <div className="flex items-start justify-between mb-4 z-10 relative">
                          <div>
-                            <h3 className={`text-[15px] font-semibold mb-0.5 ${isDark ? 'text-white' : 'text-slate-800'}`}>Client Engagements</h3>
-                            <p className={`text-[12px] font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Active vs Total Roster</p>
+                            <h3 className={`text-[15px] font-semibold mb-0.5 ${isDark ? 'text-white' : 'text-slate-800'}`}>Total clients</h3>
+                            <p className={`text-[12px] font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                              {stats.clients.active} active · {stats.clients.total} total
+                            </p>
                          </div>
                          <div className="flex items-center gap-1.5">
                             <button className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isDark ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-slate-900 text-white'}`}>
@@ -514,7 +566,7 @@ export default function DashboardModern() {
                       </div>
                       
                       <div className={`text-[44px] font-light tracking-tight leading-none mb-1 z-10 relative pl-1 flex items-baseline ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                        {stats.clients.total || 185}<span className={`text-[20px] font-medium relative ml-2 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>clients</span>
+                        {stats.clients.total}<span className={`text-[20px] font-medium relative ml-2 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>clients</span>
                       </div>
                       
                       <div className="flex-1 -mx-0 mt-2 relative z-0">
@@ -552,18 +604,21 @@ export default function DashboardModern() {
                    {/* Newsletter Coverage */}
                    <div className={`rounded-[24px] p-7 flex flex-col h-[276px] border shadow-[0_4px_24px_rgba(0,0,0,0.02)] relative transition-colors ${isDark ? 'bg-[#101012] border-white/5' : 'bg-[#FAFAFA] border-white/60'}`}>
                       <div className="flex items-start justify-between mb-8">
-                         <h3 className={`text-[15px] font-semibold ${isDark ? 'text-white' : 'text-slate-800'}`}>AI Newsletter Synthesis</h3>
+                         <h3 className={`text-[15px] font-semibold ${isDark ? 'text-white' : 'text-slate-800'}`}>Newsletters</h3>
                          <button className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${isDark ? 'border-white/10 text-slate-400 hover:bg-white/5' : 'border-slate-100 text-slate-400 hover:bg-slate-50'}`}>
                             <ArrowUpRight className="w-3.5 h-3.5"/>
                          </button>
                       </div>
                       
                       <div className="mt-8">
-                         <p className={`text-[12px] font-semibold mb-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Generated Content Reach</p>
+                         <p className={`text-[12px] font-semibold mb-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Total in workspace</p>
                          <div className={`text-[34px] font-light tracking-tight leading-none flex items-start gap-1 ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                           {stats.newsletters.total || 0} <span className={`text-[16px] font-medium mt-1.5 ml-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>campaigns drafted</span>
+                           {stats.newsletters.total}{' '}
+                           <span className={`text-[16px] font-medium mt-1.5 ml-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>newsletters</span>
                          </div>
-                         <div className={`text-[11px] font-semibold mt-1.5 ml-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{stats.newsletters.published || 0} issues successfully dispatched</div>
+                         <div className={`text-[11px] font-semibold mt-1.5 ml-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                           {stats.newsletters.published} published
+                         </div>
                       </div>
                    </div>
 
@@ -574,8 +629,8 @@ export default function DashboardModern() {
               <div className={`mt-2 rounded-[24px] p-8 border shadow-[0_8px_30px_rgba(0,0,0,0.03)] mb-8 transition-colors ${isDark ? 'bg-[#111114] border-white/5' : 'bg-white border-slate-100'}`}>
                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
                     <div>
-                       <h3 className={`text-[15px] font-semibold mb-0.5 ${isDark ? 'text-white' : 'text-slate-800'}`}>Cortex Event Protocol</h3>
-                       <p className={`text-[12px] font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Historical audit of AI subsystem records.</p>
+                       <h3 className={`text-[15px] font-semibold mb-0.5 ${isDark ? 'text-white' : 'text-slate-800'}`}>Recent activity</h3>
+                       <p className={`text-[12px] font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Latest updates from your workspace (same feed as the main dashboard).</p>
                     </div>
                     
                     <div className="flex items-center gap-3">

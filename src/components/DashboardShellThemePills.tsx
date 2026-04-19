@@ -8,7 +8,7 @@ type Props = {
 
 /**
  * Shared theme switcher for dashboard shell pages (modern / analytics / guidance).
- * Theme 2 = analytics-modern, Theme 3 = dashboard-guidance; main dashboard = dashboard-modern.
+ * Theme 1 = dashboard-modern, Theme 2 = analytics-modern, Theme 3 = dashboard-guidance.
  */
 export function DashboardShellThemePills({ isDark = false }: Props) {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ export function DashboardShellThemePills({ isDark = false }: Props) {
           activeModern ? active : inactive,
         )}
       >
-        <LayoutGrid className="w-4 h-4" /> Dashboard
+        <LayoutGrid className="w-4 h-4" /> Theme 1
       </button>
       <button
         type="button"

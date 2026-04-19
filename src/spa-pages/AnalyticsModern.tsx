@@ -155,26 +155,35 @@ export default function AnalyticsModern() {
              {/* Massive soft radial blur giving physical volume to the layout */}
              <div className={`absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#D4F718] rounded-full blur-[150px] pointer-events-none transition-opacity duration-1000 ${isDark ? 'mix-blend-screen opacity-[0.06]' : 'mix-blend-normal opacity-[0.05]'}`}></div>
              
-             <div className="w-full max-w-[1360px] mx-auto pt-4 relative z-10 gap-8 flex flex-col">
+             <div className="w-full max-w-[1240px] mx-auto pt-3 relative z-10 gap-5 sm:gap-6 flex flex-col">
 
                 {/* HERO / HEADER */}
-                <div className={`p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between border shadow-sm backdrop-blur-md ${isDark ? 'bg-white/[0.02] border-white/10' : 'bg-white border-slate-200'}`}>
-                   <div>
-                      <h1 className={`text-2xl font-semibold mb-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>Production Analytics Engine</h1>
-                      <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Real-time throughput for AI report generation, communication, and client syncing.</p>
+                <div
+                  className={`rounded-2xl px-5 py-4 sm:px-6 sm:py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border backdrop-blur-md transition-shadow ${
+                    isDark
+                      ? "border-white/[0.07] bg-gradient-to-br from-white/[0.04] to-transparent shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_20px_50px_-24px_rgba(0,0,0,0.75)]"
+                      : "border-slate-200/90 bg-gradient-to-br from-white to-slate-50/80 shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_12px_40px_-18px_rgba(15,23,42,0.08)]"
+                  }`}
+                >
+                   <div className="min-w-0">
+                      <p className={`text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5 ${isDark ? "text-slate-500" : "text-slate-400"}`}>Theme 2</p>
+                      <h1 className={`text-xl sm:text-2xl font-semibold tracking-tight mb-1 ${isDark ? "text-white" : "text-slate-900"}`}>Production Analytics</h1>
+                      <p className={`text-xs sm:text-sm leading-relaxed max-w-xl ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+                        Throughput, roster sync, and delivery signals in one view.
+                      </p>
                    </div>
-                   <div className="mt-4 md:mt-0 flex items-center gap-3">
-                      <div className={`px-4 py-2 rounded-full text-sm font-medium border flex items-center gap-2 ${isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-slate-100 border-slate-200 text-slate-800'}`}>
-                         Last 7 Days <Filter className="w-4 h-4 ml-2 opacity-50" />
+                   <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+                      <div className={`px-3 py-1.5 rounded-full text-xs font-semibold border flex items-center gap-2 ${isDark ? "bg-white/[0.04] border-white/10 text-slate-200" : "bg-white border-slate-200/90 text-slate-700 shadow-sm"}`}>
+                         Last 7 days <Filter className="w-3.5 h-3.5 opacity-50" />
                       </div>
-                      <button className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors flex items-center gap-2 ${isDark ? 'bg-[#D4F718] text-black hover:bg-[#bceb00]' : 'bg-slate-900 text-white hover:bg-slate-800'}`}>
-                         <Download className="w-4 h-4" /> Export Report
+                      <button className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 shadow-md ${isDark ? "bg-[#D4F718] text-black hover:brightness-95" : "bg-slate-900 text-white hover:bg-slate-800"}`}>
+                         <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Export
                       </button>
                    </div>
                 </div>
 
                 {/* KPI ROW FOR ACCOUNTING AI */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
                    <KPICard title="Total Client Roster" value={`${safeActive} Active syncing`} amount={totalRoster} icon={<Users className="w-5 h-5" />} isDark={isDark} />
                    <KPICard title="Automated Reports" value={`${stats.reports?.completed || 118} Approved`} amount={stats.reports?.total || 145} trend="up" isDark={isDark} />
                    <KPICard title="Client Comm (Newsletters)" value={`${stats.newsletters?.published || 82} Sent out`} amount={stats.newsletters?.total || 94} icon={<Mail className="w-5 h-5" />} isDark={isDark} />
@@ -182,18 +191,24 @@ export default function AnalyticsModern() {
                 </div>
 
                 {/* CHART ROW */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 sm:gap-4">
                    {/* Production Throughput */}
-                   <div className={`col-span-2 rounded-[24px] p-7 border shadow-sm ${isDark ? 'bg-[#121214] border-white/5' : 'bg-white border-slate-200'}`}>
-                      <div className="flex justify-between items-start mb-6">
+                   <div
+                     className={`lg:col-span-3 rounded-2xl p-4 sm:p-5 border transition-shadow ${
+                       isDark
+                         ? "border-white/[0.06] bg-[#0f0f11] shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_24px_48px_-28px_rgba(0,0,0,0.65)]"
+                         : "border-slate-200/90 bg-white shadow-[0_1px_0_rgba(255,255,255,0.85)_inset,0_16px_40px_-20px_rgba(15,23,42,0.07)]"
+                     }`}
+                   >
+                      <div className="flex justify-between items-start mb-3 sm:mb-4">
                          <div>
-                            <h3 className={`text-base font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Platform Output Velocity</h3>
-                            <p className={`text-xs mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Measuring human approvals vs automated report throughput</p>
+                            <h3 className={`text-sm sm:text-[15px] font-semibold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>Output velocity</h3>
+                            <p className={`text-[11px] sm:text-xs mt-0.5 leading-snug max-w-md ${isDark ? "text-slate-500" : "text-slate-500"}`}>Reports vs comms vs target (sample series)</p>
                          </div>
                       </div>
-                      <div className="h-[300px] w-full">
+                      <div className="h-[200px] sm:h-[240px] w-full -mx-0.5">
                          <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={throughputData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                            <AreaChart data={throughputData} margin={{ top: 8, right: 8, left: -12, bottom: 4 }}>
                                <defs>
                                   <linearGradient id="colorReportVolume" x1="0" y1="0" x2="0" y2="1">
                                      <stop offset="5%" stopColor={chartColors.neon} stopOpacity={0.2} />
@@ -201,8 +216,8 @@ export default function AnalyticsModern() {
                                   </linearGradient>
                                </defs>
                                <CartesianGrid vertical={false} stroke={chartColors.grid} strokeDasharray="4 4" />
-                               <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: chartColors.text }} dy={10} />
-                               <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: chartColors.text }} />
+                               <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: chartColors.text }} dy={8} />
+                               <YAxis axisLine={false} tickLine={false} width={36} tick={{ fontSize: 10, fill: chartColors.text }} />
                                <RechartsTooltip cursor={{ stroke: chartColors.border, strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: chartColors.background, borderColor: chartColors.border, borderRadius: '8px', color: isDark ? '#fff' : '#000' }} />
                                
                                {/* Target Benchmark Line (Dashed) */}
@@ -219,43 +234,48 @@ export default function AnalyticsModern() {
                    </div>
 
                    {/* API Status & Connected Endpoints */}
-                   <div className={`col-span-1 rounded-[24px] p-7 border shadow-sm flex flex-col relative overflow-hidden ${isDark ? 'bg-[#121214] border-white/5' : 'bg-white border-slate-200'}`}>
-                      {/* Premium Background Glow for Donut */}
-                      <div className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[180px] bg-[#D4F718] opacity-[0.05] blur-2xl rounded-full pointer-events-none"></div>
+                   <div
+                     className={`lg:col-span-2 rounded-2xl p-4 sm:p-5 border flex flex-col relative overflow-hidden transition-shadow ${
+                       isDark
+                         ? "border-white/[0.06] bg-[#0f0f11] shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_24px_48px_-28px_rgba(0,0,0,0.65)]"
+                         : "border-slate-200/90 bg-white shadow-[0_1px_0_rgba(255,255,255,0.85)_inset,0_16px_40px_-20px_rgba(15,23,42,0.07)]"
+                     }`}
+                   >
+                      <div className="absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140px] h-[140px] bg-[#D4F718] opacity-[0.06] sm:opacity-[0.05] blur-2xl rounded-full pointer-events-none" />
+                      <div className={`absolute inset-0 rounded-2xl pointer-events-none ${isDark ? "bg-gradient-to-b from-white/[0.03] to-transparent" : "bg-gradient-to-b from-slate-50/50 to-transparent"}`} />
 
-                      <h3 className={`text-base font-semibold mb-2 relative z-10 ${isDark ? 'text-white' : 'text-slate-900'}`}>Client Integration Sync Status</h3>
-                      <p className={`text-xs mb-4 relative z-10 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Live breakdown of accounting ERP sync connections</p>
-                      
-                      <div className="flex-1 min-h-[240px] relative z-10 w-full flex items-center justify-center">
-                         {/* Absolute Center Metric */}
-                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20 hover:scale-105 transition-transform">
-                            <span className={`text-4xl font-extrabold tracking-tight leading-none ${isDark ? 'text-white' : 'text-slate-900'}`}>{totalRoster}</span>
-                            <span className={`text-[10px] uppercase font-bold tracking-widest mt-2 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Total Accounts</span>
+                      <h3 className={`text-sm sm:text-[15px] font-semibold mb-0.5 relative z-10 tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>Client sync mix</h3>
+                      <p className={`text-[11px] sm:text-xs mb-3 relative z-10 leading-snug ${isDark ? "text-slate-500" : "text-slate-500"}`}>Roster segments (live + illustrative)</p>
+
+                      <div className="flex-1 min-h-[180px] sm:min-h-[200px] relative z-10 w-full flex items-center justify-center">
+                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20 pt-1">
+                            <span className={`text-2xl sm:text-3xl font-bold tracking-tight tabular-nums leading-none ${isDark ? "text-white" : "text-slate-900"}`}>{totalRoster}</span>
+                            <span className={`text-[9px] uppercase font-bold tracking-[0.18em] mt-1.5 ${isDark ? "text-slate-500" : "text-slate-400"}`}>Accounts</span>
                          </div>
-                         
+
                          <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                <defs>
-                                  <filter id="pieGlow" x="-20%" y="-20%" width="140%" height="140%">
-                                     <feGaussianBlur stdDeviation="6" result="blur" />
+                                  <filter id="pieGlowTheme2" x="-20%" y="-20%" width="140%" height="140%">
+                                     <feGaussianBlur stdDeviation="5" result="blur" />
                                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
                                   </filter>
                                </defs>
                                <Pie 
                                  data={integrationStatusData} 
                                  cx="50%" cy="50%" 
-                                 innerRadius={78} 
-                                 outerRadius={100} 
-                                 paddingAngle={8} 
+                                 innerRadius={56}
+                                 outerRadius={76}
+                                 paddingAngle={6} 
                                  dataKey="value" 
                                  stroke="none"
-                                 cornerRadius={6}
+                                 cornerRadius={5}
                                >
                                   {integrationStatusData.map((entry, index) => (
                                      <Cell 
                                         key={`cell-${index}`} 
                                         fill={entry.color} 
-                                        filter={index === 0 && isDark ? 'url(#pieGlow)' : ''}
+                                        filter={index === 0 && isDark ? 'url(#pieGlowTheme2)' : ''}
                                      />
                                   ))}
                                </Pie>
@@ -267,14 +287,14 @@ export default function AnalyticsModern() {
                             </PieChart>
                          </ResponsiveContainer>
                       </div>
-                      <div className="mt-6 space-y-3 relative z-10 border-t pt-4 dark:border-white/5 border-slate-100">
+                      <div className="mt-3 sm:mt-4 space-y-1 relative z-10 border-t pt-3 dark:border-white/[0.06] border-slate-100">
                          {integrationStatusData.map((status, idx) => (
-                            <div key={idx} className={`flex items-center justify-between p-2.5 rounded-[12px] transition-colors ${isDark ? 'hover:bg-white/[0.03]' : 'hover:bg-slate-50'}`}>
-                               <div className="flex items-center gap-3">
-                                  <div className="w-3.5 h-3.5 rounded-full shadow-sm" style={{ backgroundColor: status.color, boxShadow: `0 0 10px ${status.color}40` }}></div>
-                                  <span className={`text-[13px] font-semibold ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{status.name}</span>
+                            <div key={idx} className={`flex items-center justify-between px-2 py-2 rounded-xl transition-colors ${isDark ? "hover:bg-white/[0.04]" : "hover:bg-slate-50/80"}`}>
+                               <div className="flex items-center gap-2.5 min-w-0">
+                                  <div className="w-2.5 h-2.5 rounded-full shrink-0 ring-2 ring-black/5 dark:ring-white/10" style={{ backgroundColor: status.color, boxShadow: `0 0 8px ${status.color}55` }} />
+                                  <span className={`text-xs sm:text-[13px] font-semibold truncate ${isDark ? "text-slate-300" : "text-slate-600"}`}>{status.name}</span>
                                </div>
-                               <span className={`text-[13px] font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{status.value} <span className={`font-medium ml-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Rostered</span></span>
+                               <span className={`text-xs sm:text-[13px] font-bold tabular-nums shrink-0 ${isDark ? "text-white" : "text-slate-900"}`}>{status.value}</span>
                             </div>
                          ))}
                       </div>
@@ -282,54 +302,68 @@ export default function AnalyticsModern() {
                 </div>
 
                 {/* REAL RECENT ACTIVITY LOG FROM useDashboardData */}
-                <div className={`rounded-[24px] overflow-hidden border shadow-sm ${isDark ? 'bg-[#121214] border-white/5' : 'bg-white border-slate-200'}`}>
-                   <div className={`p-6 border-b flex justify-between items-center ${isDark ? 'border-white/5' : 'border-slate-100'}`}>
-                      <div>
-                         <h3 className={`text-base font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Platform Operation Stream</h3>
-                         <p className={`text-xs mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Tracking real-time accounting AI module generation and processing.</p>
+                <div
+                  className={`rounded-2xl overflow-hidden border ${
+                    isDark
+                      ? "border-white/[0.06] bg-[#0f0f11] shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_24px_48px_-28px_rgba(0,0,0,0.65)]"
+                      : "border-slate-200/90 bg-white shadow-[0_1px_0_rgba(255,255,255,0.85)_inset,0_16px_40px_-20px_rgba(15,23,42,0.07)]"
+                  }`}
+                >
+                   <div className={`px-4 py-3.5 sm:px-5 sm:py-4 border-b flex justify-between items-center gap-3 ${isDark ? "border-white/[0.06]" : "border-slate-100"}`}>
+                      <div className="min-w-0">
+                         <h3 className={`text-sm sm:text-[15px] font-semibold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>Operation stream</h3>
+                         <p className={`text-[11px] sm:text-xs mt-0.5 ${isDark ? "text-slate-500" : "text-slate-500"}`}>Live activity from your workspace</p>
                       </div>
-                      <button className={`p-2 rounded-full ${isDark ? 'hover:bg-white/5 text-slate-400' : 'hover:bg-slate-100 text-slate-500'}`}>
-                         <Search className="w-5 h-5" />
+                      <button type="button" className={`p-2 rounded-xl shrink-0 transition-colors ${isDark ? "hover:bg-white/[0.06] text-slate-400" : "hover:bg-slate-100 text-slate-500"}`}>
+                         <Search className="w-4 h-4" />
                       </button>
                    </div>
-                   
+
                    <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse whitespace-nowrap">
                          <thead>
-                            <tr className={`text-xs uppercase tracking-wider ${isDark ? 'text-slate-500 bg-white/[0.02]' : 'text-slate-500 bg-slate-50'}`}>
-                               <th className="px-6 py-4 font-medium">Log ID</th>
-                               <th className="px-6 py-4 font-medium">Event Type</th>
-                               <th className="px-6 py-4 font-medium">Title & Context</th>
-                               <th className="px-6 py-4 font-medium">Timing</th>
-                               <th className="px-6 py-4 font-medium">Processor Status</th>
+                            <tr className={`text-[10px] sm:text-xs uppercase tracking-wider ${isDark ? "text-slate-500 bg-white/[0.02]" : "text-slate-500 bg-slate-50/90"}`}>
+                               <th className="px-4 sm:px-5 py-2.5 sm:py-3 font-semibold">Log ID</th>
+                               <th className="px-4 sm:px-5 py-2.5 sm:py-3 font-semibold">Type</th>
+                               <th className="px-4 sm:px-5 py-2.5 sm:py-3 font-semibold">Title</th>
+                               <th className="px-4 sm:px-5 py-2.5 sm:py-3 font-semibold">When</th>
+                               <th className="px-4 sm:px-5 py-2.5 sm:py-3 font-semibold">Status</th>
                             </tr>
                          </thead>
-                         <tbody className={`text-sm divide-y ${isDark ? 'divide-white/5' : 'divide-slate-100'}`}>
-                            {recentActivity.map((log, idx) => (
-                               <tr key={idx} className={`transition-colors group hover:shadow-sm ${isDark ? 'hover:bg-white/[0.02]' : 'hover:bg-slate-50'}`}>
-                                  <td className={`px-6 py-4 font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                         <tbody className={`text-xs sm:text-sm divide-y ${isDark ? "divide-white/[0.05]" : "divide-slate-100"}`}>
+                            {recentActivity.length === 0 ? (
+                               <tr>
+                                  <td colSpan={5} className={`px-5 py-10 text-center text-sm ${isDark ? "text-slate-500" : "text-slate-500"}`}>
+                                     No activity yet. New events will appear here.
+                                  </td>
+                               </tr>
+                            ) : (
+                            recentActivity.map((log, idx) => (
+                               <tr key={idx} className={`transition-colors ${isDark ? "hover:bg-white/[0.03]" : "hover:bg-slate-50/80"}`}>
+                                  <td className={`px-4 sm:px-5 py-2.5 sm:py-3 font-mono text-[11px] sm:text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                                      {log.id.slice(0, 8).toUpperCase()}
                                   </td>
-                                  <td className="px-6 py-4">
-                                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border ${isDark ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400' : 'bg-indigo-50 border-indigo-200 text-indigo-700'}`}>
-                                        <Activity className="w-3 h-3" /> {log.type.toUpperCase()}
+                                  <td className="px-4 sm:px-5 py-2.5 sm:py-3">
+                                     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-semibold border ${isDark ? "bg-indigo-500/10 border-indigo-500/20 text-indigo-300" : "bg-indigo-50 border-indigo-200/80 text-indigo-700"}`}>
+                                        <Activity className="w-3 h-3 shrink-0" /> {log.type.toUpperCase()}
                                      </span>
                                   </td>
-                                  <td className="px-6 py-4 min-w-[280px]">
-                                     <div className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>{log.title}</div>
-                                     <div className={`text-xs mt-0.5 truncate max-w-[400px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{log.description}</div>
+                                  <td className="px-4 sm:px-5 py-2.5 sm:py-3 min-w-[200px] sm:min-w-[260px]">
+                                     <div className={`font-semibold text-[13px] sm:text-sm ${isDark ? "text-white" : "text-slate-900"}`}>{log.title}</div>
+                                     <div className={`text-[11px] sm:text-xs mt-0.5 truncate max-w-[320px] sm:max-w-[400px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>{log.description}</div>
                                   </td>
-                                  <td className={`px-6 py-4 font-mono text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                                  <td className={`px-4 sm:px-5 py-2.5 sm:py-3 font-mono text-[11px] sm:text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                                      {formatDate(log.timestamp)}
                                   </td>
-                                  <td className="px-6 py-4">
-                                     <span className={`flex items-center gap-1.5 text-xs font-semibold ${log.status === 'completed' ? (isDark ? 'text-emerald-400' : 'text-emerald-600') : (isDark ? 'text-slate-400' : 'text-slate-500')}`}>
+                                  <td className="px-4 sm:px-5 py-2.5 sm:py-3">
+                                     <span className={`flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold ${log.status === 'completed' ? (isDark ? 'text-emerald-400' : 'text-emerald-600') : (isDark ? 'text-slate-400' : 'text-slate-500')}`}>
                                         {log.status === 'completed' ? <CheckCircle2 className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
                                         {log.status}
                                      </span>
                                   </td>
                                </tr>
-                            ))}
+                            ))
+                            )}
                          </tbody>
                       </table>
                    </div>
@@ -345,21 +379,35 @@ export default function AnalyticsModern() {
 
 function KPICard({ title, value, amount, trend, icon, highlight, isDark }: any) {
    return (
-     <div className={`p-6 rounded-[24px] border shadow-sm relative overflow-hidden transition-all hover:scale-[1.02] ${isDark ? 'bg-[#16161a] border-white/5' : 'bg-white border-slate-200'}`}>
-        {highlight && isDark && (
-           <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4F718] opacity-[0.03] blur-3xl rounded-full"></div>
+     <div
+       className={`group relative overflow-hidden rounded-2xl border p-4 sm:p-[18px] transition-all duration-300 ${
+         isDark
+           ? "border-white/[0.06] bg-[#0f0f11] shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_12px_32px_-16px_rgba(0,0,0,0.6)] hover:border-white/[0.1]"
+           : "border-slate-200/90 bg-white shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_10px_28px_-14px_rgba(15,23,42,0.06)] hover:border-slate-300/90 hover:shadow-[0_14px_36px_-16px_rgba(15,23,42,0.09)]"
+       }`}
+     >
+        {highlight && (
+           <div
+             className={`pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full blur-2xl ${isDark ? "bg-[#D4F718]/[0.12]" : "bg-[#D4F718]/20"}`}
+           />
         )}
-        <div className="flex justify-between items-start mb-4">
-           <h4 className={`text-sm font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{title}</h4>
-           <div className={`p-2 rounded-full border ${isDark ? 'bg-white/5 text-[#D4F718] border-white/5' : 'bg-slate-50 hover:bg-slate-100 border-[#E5E7EB] text-slate-700'}`}>
-              {icon || (trend === 'up' ? <TrendingUp className="w-4 h-4" /> : <Activity className="w-4 h-4" />)}
+        {!highlight && (
+           <div
+             className={`pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${isDark ? "bg-gradient-to-br from-white/[0.04] to-transparent" : "bg-gradient-to-br from-slate-50/80 to-transparent"}`}
+           />
+        )}
+        <div className="relative flex items-start justify-between gap-2">
+           <h4 className={`min-w-0 text-[11px] font-semibold uppercase tracking-wide leading-snug sm:text-xs ${isDark ? "text-slate-500" : "text-slate-500"}`}>{title}</h4>
+           <div className={`shrink-0 rounded-lg border p-1.5 transition-colors ${isDark ? "border-white/[0.08] bg-white/[0.04] text-[#D4F718]" : "border-slate-200/90 bg-slate-50 text-slate-700"}`}>
+              {icon || (trend === "up" ? <TrendingUp className="h-3.5 w-3.5" /> : <Activity className="h-3.5 w-3.5" />)}
            </div>
         </div>
-        <div className={`text-3xl font-light tracking-tight mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>{amount}</div>
-        <div className={`text-sm font-medium flex items-center gap-1 ${
-           trend === 'up' ? (isDark ? 'text-emerald-400' : 'text-emerald-600') : 
-           (isDark ? 'text-slate-400' : 'text-slate-500')
-        }`}>
+        <div className={`relative mt-2.5 text-2xl font-semibold tracking-tight tabular-nums sm:text-[26px] sm:font-light ${isDark ? "text-white" : "text-slate-900"}`}>{amount}</div>
+        <div
+           className={`relative mt-1 text-xs font-medium leading-snug ${
+              trend === "up" ? (isDark ? "text-emerald-400/95" : "text-emerald-600") : isDark ? "text-slate-400" : "text-slate-500"
+           }`}
+        >
            {value}
         </div>
      </div>

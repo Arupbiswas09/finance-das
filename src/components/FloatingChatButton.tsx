@@ -1,6 +1,5 @@
 import { AIIcon } from "@/components/icons/CustomIcons";
 import { Button } from "@/components/ui/button";
-import { useOrganizationColors } from "@/hooks/useOrganizationColors";
 
 interface FloatingChatButtonProps {
     onClick: () => void;

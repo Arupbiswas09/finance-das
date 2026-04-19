@@ -59,7 +59,7 @@ const App = () => {
             <TooltipProvider>
               <Toaster />
               <Sonner />
-              {!isShowcaseMode() && <FloatingChatWidget />}
+              <FloatingChatWidget />
               {isShowcaseMode() ? (
               <Routes>
                 <Route path="/" element={<Navigate to="/dashboard-modern" replace />} />
